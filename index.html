@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0d12">
+  <meta name="description" content="Eric Worth — Product Manager & Applications Engineer. Hardware, software, and product thinking.">
+  <title>Eric Worth — Product Manager & Applications Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="cursor-glow"></div>
+  <div class="scroll-progress"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Eric Worth home">
+      <span class="brand-dot"></span>
+      <span>EW</span>
+    </a>
+    <nav class="nav">
+      <a href="#work">Work</a>
+      <a href="#thinking">How I think</a>
+      <a href="#about">About</a>
+    </nav>
+    <button class="icon-button" id="themeToggle" aria-label="Toggle contrast mode" title="Toggle contrast mode">◐</button>
+  </header>
+
+  <main id="top">
+    <section class="hero section">
+      <div class="hero-copy reveal">
+        <p class="eyebrow"><span class="pulse"></span> PRODUCT • HARDWARE • SOFTWARE</p>
+        <h1>I like turning messy problems into <span>useful products.</span></h1>
+        <p class="hero-lede">
+          Product manager and applications engineer who likes getting close to the hardware,
+          the customer, and the uncomfortable details in between.
+        </p>
+        <div class="hero-actions">
+          <a class="button button-primary magnetic" href="#work">Explore my work <span>↓</span></a>
+          <button class="button button-ghost magnetic" id="randomFact">Press for a random fact <span>✦</span></button>
+        </div>
+        <div class="fact" id="fact" aria-live="polite"></div>
+      </div>
+
+      <div class="hero-orbit reveal" aria-label="Interactive product system illustration">
+        <div class="orbit orbit-1"></div>
+        <div class="orbit orbit-2"></div>
+        <div class="orbit orbit-3"></div>
+        <div class="core">
+          <span>PRODUCT</span>
+          <strong>↗</strong>
+        </div>
+        <button class="orbit-node node-1" data-label="Customer">customer</button>
+        <button class="orbit-node node-2" data-label="Hardware">hardware</button>
+        <button class="orbit-node node-3" data-label="Software">software</button>
+        <button class="orbit-node node-4" data-label="Business">business</button>
+        <div class="orbit-caption" id="orbitCaption">Hover a node</div>
+      </div>
+    </section>
+
+    <section id="work" class="section">
+      <div class="section-heading reveal">
+        <p class="eyebrow">SELECTED WORK</p>
+        <h2>A few problems I've gotten to wrestle with.</h2>
+      </div>
+
+      <div class="work-grid">
+        <article class="project-card featured reveal" data-project="totem">
+          <div class="card-top">
+            <span class="tag">Hardware + App</span>
+            <span class="card-index">01</span>
+          </div>
+          <div class="project-visual totem-visual">
+            <div class="signal signal-a"></div>
+            <div class="signal signal-b"></div>
+            <div class="device">
+              <div class="device-screen">TOTEM</div>
+              <div class="device-led"></div>
+            </div>
+          </div>
+          <div class="card-body">
+            <h3>Totem</h3>
+            <p>A screen-free festival navigation product became a lesson in range, onboarding, hardware constraints, and listening to real users.</p>
+            <button class="text-button project-open" data-project="totem">Open case study <span>↗</span></button>
+          </div>
+        </article>
+
+        <article class="project-card reveal" data-project="cloud">
+          <div class="card-top">
+            <span class="tag">Enterprise</span>
+            <span class="card-index">02</span>
+          </div>
+          <div class="project-visual grid-visual">
+            <div class="grid-lines"></div>
+            <div class="metric">∞</div>
+          </div>
+          <div class="card-body">
+            <h3>Enterprise cloud programs</h3>
+            <p>Solutions work at the intersection of technical feasibility, commercial reality, and getting the right people aligned.</p>
+            <button class="text-button project-open" data-project="cloud">See the approach <span>↗</span></button>
+          </div>
+        </article>
+
+        <article class="project-card reveal" data-project="deployment">
+          <div class="card-top">
+            <span class="tag">Scale</span>
+            <span class="card-index">03</span>
+          </div>
+          <div class="project-visual deployment-visual">
+            <div class="stack s1"></div>
+            <div class="stack s2"></div>
+            <div class="stack s3"></div>
+            <div class="stack s4"></div>
+          </div>
+          <div class="card-body">
+            <h3>K–12 device deployments</h3>
+            <p>Large deployments taught me that the “product” includes logistics, support, stakeholders, and what happens after launch.</p>
+            <button class="text-button project-open" data-project="deployment">See the scale <span>↗</span></button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="thinking" class="section thinking">
+      <div class="section-heading reveal">
+        <p class="eyebrow">HOW I THINK</p>
+        <h2>Give me a messy problem. Then let's make it less messy.</h2>
+      </div>
+
+      <div class="thinking-panel reveal">
+        <div class="thinking-tabs" role="tablist" aria-label="How Eric thinks">
+          <button class="think-tab active" data-think="discovery">01 / Discover</button>
+          <button class="think-tab" data-think="validate">02 / Validate</button>
+          <button class="think-tab" data-think="build">03 / Build</button>
+          <button class="think-tab" data-think="learn">04 / Learn</button>
+        </div>
+        <div class="thinking-content">
+          <p class="big-number" id="thinkNumber">01</p>
+          <div>
+            <h3 id="thinkTitle">Start with the problem, not the feature.</h3>
+            <p id="thinkText">
+              I want to understand who is struggling, what they are actually trying to accomplish,
+              and what evidence we have before jumping into a solution.
+            </p>
+            <div class="principle" id="thinkPrinciple">Question → context → evidence → opportunity</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section about">
+      <div class="about-left reveal">
+        <p class="eyebrow">ABOUT</p>
+        <h2>Part PM.<br>Part engineer.<br>Very curious.</h2>
+      </div>
+      <div class="about-right reveal">
+        <p>
+          I've worked across product management, applications engineering, enterprise technology,
+          and large-scale deployments. I enjoy the space where product decisions meet physical
+          constraints, technical tradeoffs, and actual users.
+        </p>
+        <p>
+          Outside of work, I tend to learn by taking things apart — sometimes metaphorically,
+          sometimes literally.
+        </p>
+        <div class="mini-stats">
+          <div><strong>40k+</strong><span>Totem units sold</span></div>
+          <div><strong>8.5k+</strong><span>app users in 60 days</span></div>
+          <div><strong>300k+</strong><span>devices deployed</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section contact">
+      <div class="contact-card reveal">
+        <p class="eyebrow">NEXT?</p>
+        <h2>Let's build something that makes people say, “oh, that's nice.”</h2>
+        <p>Add your preferred email / LinkedIn / GitHub links here once the structure feels right.</p>
+        <div class="contact-actions">
+          <a class="button button-primary magnetic" href="#top">Back to top ↑</a>
+          <a class="button button-ghost magnetic" href="resume.pdf">View résumé ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© <span id="year"></span> Eric Worth</span>
+    <span>Built with HTML, CSS & JavaScript.</span>
+  </footer>
+
+  <div class="modal-backdrop" id="modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="Close">×</button>
+      <p class="eyebrow" id="modalEyebrow">CASE STUDY</p>
+      <h2 id="modalTitle">Totem</h2>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
