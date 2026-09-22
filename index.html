@@ -45,19 +45,59 @@
         <div class="fact" id="fact" aria-live="polite"></div>
       </div>
 
-      <div class="hero-orbit reveal" aria-label="Interactive product system illustration">
-        <div class="orbit orbit-1"></div>
-        <div class="orbit orbit-2"></div>
-        <div class="orbit orbit-3"></div>
-        <div class="core">
-          <span>PRODUCT</span>
-          <strong>↗</strong>
+      <div class="system-map-wrap reveal">
+        <div class="system-map-header">
+          <div>
+            <p class="eyebrow">THE JOB, AS I SEE IT</p>
+            <h2>Move between worlds.</h2>
+          </div>
+          <button class="map-reset" id="mapReset">Reset</button>
         </div>
-        <button class="orbit-node node-1" data-label="Customer">customer</button>
-        <button class="orbit-node node-2" data-label="Hardware">hardware</button>
-        <button class="orbit-node node-3" data-label="Software">software</button>
-        <button class="orbit-node node-4" data-label="Business">business</button>
-        <div class="orbit-caption" id="orbitCaption">Hover a node</div>
+
+        <div class="system-map">
+          <svg class="map-lines" viewBox="0 0 520 520" aria-hidden="true">
+            <line class="base-line" x1="260" y1="260" x2="260" y2="58"></line>
+            <line class="base-line" x1="260" y1="260" x2="442" y2="170"></line>
+            <line class="base-line" x1="260" y1="260" x2="416" y2="414"></line>
+            <line class="base-line" x1="260" y1="260" x2="104" y2="414"></line>
+            <line class="base-line" x1="260" y1="260" x2="78" y2="170"></line>
+            <line class="active-line" id="activeLine" x1="260" y1="260" x2="260" y2="58"></line>
+          </svg>
+
+          <div class="map-ring ring-a"></div>
+          <div class="map-ring ring-b"></div>
+          <button class="map-node customer" data-node="customer">customer</button>
+          <button class="map-node business" data-node="business">business</button>
+          <button class="map-node software" data-node="software">software</button>
+          <button class="map-node hardware" data-node="hardware">hardware</button>
+          <button class="map-node product core-node" data-node="product">
+            <span>PRODUCT</span><strong>↗</strong>
+          </button>
+
+          <div class="map-status" id="mapStatus">
+            <span class="status-dot"></span>
+            Pick a starting point
+          </div>
+        </div>
+
+        <div class="bridge-card" id="bridgeCard">
+          <div class="bridge-kicker" id="bridgeKicker">PRODUCT SYSTEM</div>
+          <h3 id="bridgeTitle">The interesting part is in the handoffs.</h3>
+          <p id="bridgeText">Click any node to see what I care about there. Then click a second node to trace the connection between them.</p>
+          <div class="bridge-path" id="bridgePath"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section map-proof">
+      <div class="section-heading reveal">
+        <p class="eyebrow">WHY THIS MATTERS</p>
+        <h2>Interoperability is more useful than staying in one lane.</h2>
+      </div>
+      <div class="proof-grid">
+        <div class="proof-card reveal"><span>01</span><h3>Translate</h3><p>Turn a customer problem into language an engineer, designer, supplier, or executive can act on.</p></div>
+        <div class="proof-card reveal"><span>02</span><h3>Connect</h3><p>See the dependency between a product decision and the physical, technical, operational, or commercial system around it.</p></div>
+        <div class="proof-card reveal"><span>03</span><h3>Trade off</h3><p>Make constraints visible so the team can choose deliberately instead of discovering them during launch.</p></div>
       </div>
     </section>
 
@@ -68,7 +108,7 @@
       </div>
 
       <div class="work-grid">
-        <article class="project-card featured reveal" data-project="totem">
+        <article class="project-card featured reveal">
           <div class="card-top">
             <span class="tag">Hardware + App</span>
             <span class="card-index">01</span>
@@ -88,15 +128,9 @@
           </div>
         </article>
 
-        <article class="project-card reveal" data-project="cloud">
-          <div class="card-top">
-            <span class="tag">Enterprise</span>
-            <span class="card-index">02</span>
-          </div>
-          <div class="project-visual grid-visual">
-            <div class="grid-lines"></div>
-            <div class="metric">∞</div>
-          </div>
+        <article class="project-card reveal">
+          <div class="card-top"><span class="tag">Enterprise</span><span class="card-index">02</span></div>
+          <div class="project-visual grid-visual"><div class="metric">∞</div></div>
           <div class="card-body">
             <h3>Enterprise cloud programs</h3>
             <p>Solutions work at the intersection of technical feasibility, commercial reality, and getting the right people aligned.</p>
@@ -104,16 +138,10 @@
           </div>
         </article>
 
-        <article class="project-card reveal" data-project="deployment">
-          <div class="card-top">
-            <span class="tag">Scale</span>
-            <span class="card-index">03</span>
-          </div>
+        <article class="project-card reveal">
+          <div class="card-top"><span class="tag">Scale</span><span class="card-index">03</span></div>
           <div class="project-visual deployment-visual">
-            <div class="stack s1"></div>
-            <div class="stack s2"></div>
-            <div class="stack s3"></div>
-            <div class="stack s4"></div>
+            <div class="stack s1"></div><div class="stack s2"></div><div class="stack s3"></div><div class="stack s4"></div>
           </div>
           <div class="card-body">
             <h3>K–12 device deployments</h3>
@@ -129,7 +157,6 @@
         <p class="eyebrow">HOW I THINK</p>
         <h2>Give me a messy problem. Then let's make it less messy.</h2>
       </div>
-
       <div class="thinking-panel reveal">
         <div class="thinking-tabs" role="tablist" aria-label="How Eric thinks">
           <button class="think-tab active" data-think="discovery">01 / Discover</button>
@@ -141,10 +168,7 @@
           <p class="big-number" id="thinkNumber">01</p>
           <div>
             <h3 id="thinkTitle">Start with the problem, not the feature.</h3>
-            <p id="thinkText">
-              I want to understand who is struggling, what they are actually trying to accomplish,
-              and what evidence we have before jumping into a solution.
-            </p>
+            <p id="thinkText">I want to understand who is struggling, what they are actually trying to accomplish, and what evidence we have before jumping into a solution.</p>
             <div class="principle" id="thinkPrinciple">Question → context → evidence → opportunity</div>
           </div>
         </div>
@@ -157,15 +181,8 @@
         <h2>Part PM.<br>Part engineer.<br>Very curious.</h2>
       </div>
       <div class="about-right reveal">
-        <p>
-          I've worked across product management, applications engineering, enterprise technology,
-          and large-scale deployments. I enjoy the space where product decisions meet physical
-          constraints, technical tradeoffs, and actual users.
-        </p>
-        <p>
-          Outside of work, I tend to learn by taking things apart — sometimes metaphorically,
-          sometimes literally.
-        </p>
+        <p>I've worked across product management, applications engineering, enterprise technology, and large-scale deployments. I enjoy the space where product decisions meet physical constraints, technical tradeoffs, and actual users.</p>
+        <p>Outside of work, I tend to learn by taking things apart — sometimes metaphorically, sometimes literally.</p>
         <div class="mini-stats">
           <div><strong>40k+</strong><span>Totem units sold</span></div>
           <div><strong>8.5k+</strong><span>app users in 60 days</span></div>
