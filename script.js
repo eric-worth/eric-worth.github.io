@@ -1,3 +1,4 @@
+document.documentElement.classList.add('js');
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const facts=[
 "I've shipped a product that ended up selling more than 40,000 units.",

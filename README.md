@@ -1,5 +1,5 @@
-######## Eric Worth Portfolio v4.4
+# Eric Worth Portfolio v4.5 GitHub Pages Fix
 
-Static GitHub Pages portfolio. Upload `index.html`, `styles.css`, `script.js`, and `Eric-Worth-Resume.pdf` to the repository root.
+Upload the contents of this folder directly to the repository root.
 
-Version 4.4 changes Project 04 to the same full-width two-column layout as Project 01, while retaining the single-column mobile layout.
+This build removes accidental Markdown escape characters from `styles.css`, repairs the malformed `2px` token, uses explicit relative asset paths, adds a no-JavaScript visibility fallback, and includes `.nojekyll` for straightforward static hosting.
