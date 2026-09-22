@@ -1,220 +1,98 @@
-const facts = [
-  "I built Ethereum and Chia mining rigs because apparently one kind of hardware tinkering wasn't enough.",
-  "My favorite product decisions usually start with a constraint.",
-  "I tend to trust a scrappy prototype more than a beautiful assumption.",
-  "I like products where software and physical behavior have to agree.",
-  "A good roadmap should explain what you're not building yet."
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const facts=[
+"I've shipped a product that ended up selling more than 40,000 units.",
+"I like figuring out why something isn't working more than reading how it is supposed to work.",
+"I started Totem's first beta focus group and grew it to more than 200 people.",
+"I've spent a surprising amount of time thinking about wireless range.",
+"ESP32 and ESP-NOW gave me a healthy respect for the difference between 'works on my desk' and 'works at a festival.'",
+"I've worked on products where changing one physical component meant changing the app, firmware, instructions, and customer experience.",
+"I'd rather test a rough idea than spend three weeks arguing about a perfect version of it.",
+"I've learned that the person using a product and the person asking for a feature are not always asking for the same thing.",
+"I've worked on technology programs involving more than 300,000 devices.",
+"Large deployments taught me that the boring stuff is usually where things break.",
+"I've spent time looking at failed equipment, not just successful prototypes.",
+"I can spend an afternoon happily comparing components and datasheets.",
+"I enjoy cleaning up a terrible spreadsheet almost as much as building something physical.",
+"I own an OP-1. If you know, you know.",
+"I've taught myself several instruments and still mostly play the things I want to hear.",
+"I daily drive a manual because I like being involved in the thing I'm doing.",
+"I've repaired electronics that probably would have been easier to replace.",
+"I have a soft spot for products that are a little weird, as long as the weirdness has a reason.",
+"I ask 'why?' a lot. Usually followed by 'what happens if we change this?'",
+"I like going from a customer complaint to an engineering conversation without losing the plot.",
+"I've learned that a clean dashboard doesn't fix bad data.",
+"Good data does not automatically tell you what to do.",
+"I don't mind saying 'I don't know.' I do mind leaving it there.",
+"One of my favorite parts of product work is finding the thing nobody thought would matter.",
+"I like knowing enough about the next person's job to make that job easier.",
+"I've worked on products where millimeters, battery life, wireless range, and customer expectations all mattered at once."
 ];
-
-const factEl = document.querySelector("#fact");
-document.querySelector("#randomFact").addEventListener("click", () => {
-  const fact = facts[Math.floor(Math.random() * facts.length)];
-  factEl.textContent = "✦ " + fact;
-});
-
-const nodeData = {
-  customer: {
-    label: "Customer",
-    kicker: "START HERE",
-    title: "The problem exists before the roadmap does.",
-    text: "Listen for the job, the friction, the workaround, and the thing people keep asking for. That becomes better product input than a pile of feature requests.",
-    next: ["product", "software"]
-  },
-  product: {
-    label: "Product",
-    kicker: "TRANSLATE",
-    title: "Turn signals into a deliberate decision.",
-    text: "Define the problem, shape the opportunity, make the tradeoffs visible, and give the team enough clarity to move without pretending uncertainty doesn't exist.",
-    next: ["customer", "software", "hardware", "business"]
-  },
-  software: {
-    label: "Software",
-    kicker: "SYSTEM BEHAVIOR",
-    title: "Make the experience work beyond the mockup.",
-    text: "App behavior, data, firmware, edge cases, releases, and user-facing flows are all part of the product experience.",
-    next: ["product", "hardware"]
-  },
-  hardware: {
-    label: "Hardware",
-    kicker: "PHYSICAL REALITY",
-    title: "A physical constraint is still a product requirement.",
-    text: "Size, power, connectivity, manufacturing, materials, and real-world use can reshape the experience. Good product decisions account for that early.",
-    next: ["product", "software", "business"]
-  },
-  business: {
-    label: "Business",
-    kicker: "THE SYSTEM AROUND IT",
-    title: "A product has to survive outside the prototype.",
-    text: "Suppliers, compliance, cost, commercial goals, operations, and the people selling or supporting the product all affect what can actually ship.",
-    next: ["product", "hardware"]
-  }
+$('#randomFact').onclick=()=>{const a=$('#factAside');a.hidden=false;$('#fact').textContent=facts[Math.floor(Math.random()*facts.length)];a.animate([{opacity:.2,transform:'translateY(4px)'},{opacity:1,transform:'none'}],{duration:260,fill:'both'})};
+const nodeCopy={
+product:['PRODUCT','Put all of that together.',"Decide what matters, what doesn't, and what we're going to do next."],
+customer:['CUSTOMER','Start with what actually went wrong.',"Talk to people. Look at the weird edge cases. Figure out whether the thing they're asking for is actually the problem."],
+engineering:['ENGINEERING',"Figure out what's possible.","Look at how it works, what can fail, what it will cost, and which constraints are going to matter later."],
+production:['PRODUCTION',"Figure out how we're actually going to make it.","A great prototype isn't much use if nobody can build it consistently."],
+data:['DATA','See what the numbers are actually saying.',"Clean things up, find the patterns, and make sure we're not making decisions from a handful of anecdotes."],
+business:['BUSINESS','Make sure the whole thing makes sense.',"Is there a customer for it? Can we build it? Can we support it? Is it worth doing?"]};
+const connectionCopy={
+'customer-engineering':"The customer doesn't care that the wireless protocol is behaving exactly as designed. They care that their friend's device disappeared.",
+'engineering-customer':"A technical limitation isn't very interesting by itself. The interesting question is whether the customer notices it.",
+'product-engineering':"Changing a mechanism, component, or requirement can change the entire experience.",
+'engineering-product':"The design gets a vote. Product has to listen without losing the original problem.",
+'production-product':"Something can be a great idea right up until you find out what it costs to actually make.",
+'product-production':"A requirement is not finished until somebody can build it consistently.",
+'data-product':"A clean chart is nice. A number that changes what we do is better.",
+'product-data':"If the question is vague, the dashboard will be precise about the wrong thing.",
+'business-product':"A market opportunity still has to survive cost, support, timing, and capacity.",
+'product-business':"A good roadmap also explains why the work is worth doing.",
+'customer-product':"The requested feature is a clue. The underlying problem is the work.",
+'product-customer':"A decision is only useful if it improves what someone actually experiences.",
+'engineering-production':"A clever design becomes a different problem when it has to be made repeatedly.",
+'production-engineering':"Manufacturing constraints are design inputs, not a surprise at the end."
 };
+let mapFrom=null;
+const map=$('#systemMap'),svg=$('#mapSvg'),base=$('#baseLines'),active=$('#activeLine');
+function points(key){const br=map.getBoundingClientRect(),a=$('.core').getBoundingClientRect(),b=$(`[data-node="${key}"]`).getBoundingClientRect(),ac={x:a.left+a.width/2-br.left,y:a.top+a.height/2-br.top},bc={x:b.left+b.width/2-br.left,y:b.top+b.height/2-br.top},dx=bc.x-ac.x,dy=bc.y-ac.y,len=Math.hypot(dx,dy)||1,ux=dx/len,uy=dy/len,ar=Math.min(a.width,a.height)/2+4,tx=Math.abs(ux)<.001?1e9:b.width/2/Math.abs(ux),ty=Math.abs(uy)<.001?1e9:b.height/2/Math.abs(uy),zr=Math.min(tx,ty)+4;return{x1:ac.x+ux*ar,y1:ac.y+uy*ar,x2:bc.x-ux*zr,y2:bc.y-uy*zr}}
+function attrs(el,p){Object.entries(p).forEach(([k,v])=>el.setAttribute(k,v))}function drawMap(){const r=map.getBoundingClientRect();svg.setAttribute('viewBox',`0 0 ${r.width} ${r.height}`);base.innerHTML='';['customer','engineering','production','data','business'].forEach(k=>{let l=document.createElementNS('http://www.w3.org/2000/svg','line');l.classList.add('base-line');attrs(l,points(k));base.appendChild(l)});const key=$('.node.active')?.dataset.node;if(key){active.style.opacity=1;attrs(active,points(key))}else active.style.opacity=0}
+function selectNode(key){$$('[data-node]').forEach(n=>n.classList.toggle('active',n.dataset.node===key));const d=nodeCopy[key],thought=mapFrom&&mapFrom!==key?connectionCopy[`${mapFrom}-${key}`]:null;$('#systemKicker').textContent=thought?`${nodeCopy[mapFrom][0]} → ${d[0]}`:d[0];$('#systemTitle').textContent=thought?thought:d[1];$('#systemText').textContent=thought?'That connection is where the product decision usually gets interesting.':d[2];mapFrom=key;drawMap()}$$('[data-node]').forEach(n=>n.onclick=()=>selectNode(n.dataset.node));$('#mapReset').onclick=()=>{mapFrom=null;selectNode('product');mapFrom=null};new ResizeObserver(drawMap).observe(map);requestAnimationFrame(drawMap);
+const steps={find:['STEP 01','First, I figure out what is actually going on.','Talk to customers. Look at the product. Visit the field. Read the support tickets. Pull the data. Talk to the person who has to repair the thing.',['Customers','Field','Support','Data']],learn:['STEP 02','Then I learn enough to ask better questions.','How does it work? Where does it fail? What are we assuming? What would be expensive to change later?',['Mechanisms','Assumptions','Failure points']],compare:['STEP 03','Then I compare the real options.','Not just what would be coolest. What works, what costs too much, what creates a new problem, and what customers actually care about.',['Performance','Cost','Risk','Customer value']],make:['STEP 04','Then we build something.','Requirements, prototypes, drawings, suppliers, testing, releases, documentation. Whatever the problem needs.',['Requirements','Prototypes','Testing','Release']],improve:['STEP 05','Then we see what happened.','Because the first version is almost never the last version.',['Results','Feedback','Next version']]};let tabTurn=0;$$('.tabs button').forEach(t=>t.onclick=()=>{$$('.tabs button').forEach(x=>x.classList.remove('active'));t.classList.add('active');const d=steps[t.dataset.step];$('#stepNum').textContent=d[0];$('#stepTitle').textContent=d[1];$('#stepText').textContent=d[2];$('#chips').innerHTML=d[3].map(x=>`<span>${x}</span>`).join('');tabTurn+=64;$('#orbits').style.setProperty('--tab-turn',tabTurn+'deg')});
+const projects={playcore:{label:'PLAYCORE · PHYSICAL PRODUCT DEVELOPMENT',title:'Developing a new outdoor fitness product line',intro:'Helping update an aging product portfolio requires customer research, mechanical investigation, design judgment, reliable data, and a practical path to production.',sections:[['The problem','The work involves existing products with field issues, new concepts, several brands, multiple production groups, and disconnected product and sales information.'],['What I do','I help build the product plan and move it forward through market research, field inspections, requirements, design reviews, supplier conversations, prototype planning, technical documentation, and clear communication.'],['The engineering questions','Which resistance systems suit outdoor use? How does each exercise motion change the mechanism? What can be shared? How will repeated use, weather, safety, maintenance, and production affect the design?'],['Why it matters','Physical-product management means understanding how a product moves, how it may fail, how it will be built, and whether customers have a reason to choose it.']],side:['Field investigation','Mechanical systems','Requirements','Supplier research','Prototype planning','Launch tracking']},data:{label:'PLAYCORE · DATA PRODUCT',title:'Turning disconnected data into useful decisions',intro:'I built a clearer way to understand products, customers, brands, distribution, and sales history.',sections:[['The problem','Product information existed under inconsistent item numbers, names, categories, brands, and customer relationships.'],['What I built','A normalized analysis layer with product crosswalks, shared classifications, customer groupings, validation checks, and Power BI reports.'],['What it changed','The team could explore product performance, customer patterns, brand history, product families, and future scenarios from a more consistent base.'],['The lesson','A dashboard is only as trustworthy as the decisions underneath the data model.']],side:['Power BI','Excel','DAX','Data modeling','Crosswalk logic','Forecasting']},totem:{label:'TOTEM · HARDWARE + MOBILE APP',title:'Learning what users needed from a connected product',intro:'Totem combined physical hardware, firmware, wireless communication, and a mobile app. The customer experienced all of it as one product.',sections:[['The original idea','The product was designed to help people find friends in crowded environments without making another phone screen the center of the experience.'],['What users taught us','Beta testing showed that people wanted more information and control than the original concept provided.'],['My role','I owned product direction, discovery, beta feedback, feature definition, roadmap choices, and coordination across hardware, software, firmware, support, operations, marketing, and leadership.'],['The result','The mobile app reached more than 8,500 users within 60 days.']],side:['200+ beta users','8,500+ app users','Hardware','Firmware','Mobile app','Launch']},deployment:{label:'STAYMOBILE · PRODUCT AT SCALE',title:'Making large technology deployments easier to deliver',intro:'At large scale, logistics, tools, training, support, and recovery processes become part of the product.',sections:[['The scale','The programs covered more than 300,000 devices across more than 150 education sites.'],['The problem','Field teams and customers needed a clearer, more repeatable way to plan and deliver complex onsite work.'],['What I did','I used interviews, workflow analysis, time studies, field observation, service data, and team feedback to define improvements.'],['What changed','The work produced modular service packages, clearer workflows, reporting dashboards, and process improvements.']],side:['300k+ devices','150+ sites','Field research','Workflow design','Release readiness','Reporting']}};
+const modal=$('#modal');function openProject(k){const p=projects[k];$('#modalLabel').textContent=p.label;$('#modalTitle').textContent=p.title;$('#modalIntro').textContent=p.intro;$('#modalStory').innerHTML=p.sections.map(s=>`<section><h3>${s[0]}</h3><p>${s[1]}</p></section>`).join('');$('#modalSide').innerHTML=p.side.map(x=>`<span>${x}</span>`).join('');modal.classList.add('open');modal.setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}function closeModal(){modal.classList.remove('open');modal.setAttribute('aria-hidden','true');document.body.style.overflow=''}$$('[data-project]').forEach(x=>x.onclick=()=>openProject(x.dataset.project));$$('[data-open]').forEach(x=>x.onclick=()=>openProject(x.dataset.open));$('#modalClose').onclick=closeModal;modal.onclick=e=>{if(e.target===modal)closeModal()};
+const toggle=$('#contactToggle'),pop=$('#contactPopover');function contact(open){pop.classList.toggle('open',open);pop.setAttribute('aria-hidden',String(!open));toggle.setAttribute('aria-expanded',String(open))}toggle.onclick=e=>{e.stopPropagation();contact(!pop.classList.contains('open'))};document.addEventListener('click',e=>{if(!pop.contains(e.target))contact(false)});document.addEventListener('keydown',e=>{if(e.key==='Escape'){contact(false);closeModal()}});
+const observer=new IntersectionObserver(es=>es.forEach(e=>e.isIntersecting&&e.target.classList.add('visible')),{threshold:.1});$$('.reveal').forEach(x=>observer.observe(x));window.addEventListener('scroll',()=>{const max=document.documentElement.scrollHeight-innerHeight;$('.scroll-progress').style.width=(max?scrollY/max*100:0)+'%';$('#orbits').style.setProperty('--scroll-turn',(scrollY*.05)+'deg')});$('#year').textContent=new Date().getFullYear();
 
-const connections = {
-  "customer-product": ["Customer", "Product", "Turn friction into a product decision."],
-  "product-customer": ["Product", "Customer", "Test the decision against the people who have to live with it."],
-  "customer-software": ["Customer", "Software", "Translate the desired experience into actual behavior."],
-  "software-customer": ["Software", "Customer", "Watch what the experience does in the real world."],
-  "product-software": ["Product", "Software", "Convert a product intent into behavior, requirements, and edge cases."],
-  "software-product": ["Software", "Product", "Use technical reality to improve the product decision."],
-  "product-hardware": ["Product", "Hardware", "Balance the experience against physical constraints."],
-  "hardware-product": ["Hardware", "Product", "Let physical constraints reshape the right product choice."],
-  "product-business": ["Product", "Business", "Make the roadmap work in the real operating model."],
-  "business-product": ["Business", "Product", "Bring commercial and operational reality back into prioritization."],
-  "software-hardware": ["Software", "Hardware", "Make digital behavior and physical behavior agree."],
-  "hardware-software": ["Hardware", "Software", "Design the boundary, not just either side of it."],
-  "hardware-business": ["Hardware", "Business", "Connect buildability, suppliers, cost, and launch reality."],
-  "business-hardware": ["Business", "Hardware", "Bring commercial constraints into physical product decisions."]
-};
+// Audience emphasis. Everything remains visible unless a visitor chooses a lens.
+$$('[data-audience]').forEach(b=>b.onclick=()=>{$$('[data-audience]').forEach(x=>x.classList.remove('active'));b.classList.add('active');const mode=b.dataset.audience;$$('[data-focus]').forEach(el=>{const match=mode==='all'||el.dataset.focus.includes(mode);el.classList.toggle('is-muted',!match);el.classList.toggle('is-strong',match&&mode!=='all')});if(mode==='recruiter')$('#work').scrollIntoView({behavior:'smooth'});if(mode==='product')$('#work').scrollIntoView({behavior:'smooth'});if(mode==='technical')$('.question-lab').scrollIntoView({behavior:'smooth'})});
+const answers={user:['What problem would tracking solve?','Who needs the information, what decision would the information improve, and is live tracking actually necessary?'],mechanism:['What has to work together?','Map the sensors, power, connectivity, enclosure, software behavior, and the points where one layer depends on another.'],weather:['What happens away from the demo table?','Consider poor connectivity, repeated handling, battery limits, weather, maintenance, and people using the device in ways nobody planned.'],cost:['Which tradeoff changes the product?','Compare component cost, service burden, battery life, accuracy, setup time, support, and what customers would actually pay for.'],prototype:['Which assumption can we test cheaply?','Build only enough to learn whether the riskiest part of the idea works before designing the complete product.']};
+$$('[data-question]').forEach(b=>b.onclick=()=>{$$('[data-question]').forEach(x=>x.classList.remove('active'));b.classList.add('active');const a=answers[b.dataset.question];$('#questionAnswer').innerHTML=`<p class="eyebrow">I'D START HERE</p><h3>${a[0]}</h3><p>${a[1]}</p>`});
+let currentProject=null,currentModalView='overview',triggerCard=null;const originalOpen=openProject;openProject=function(k){currentProject=k;currentModalView='overview';triggerCard=document.activeElement;originalOpen(k);$$('[data-modal-view]').forEach(x=>x.classList.toggle('active',x.dataset.modalView==='overview'));$('#modalClose').focus()};
+const modalViews={overview:{playcore:['The problem','What I do','Why it matters'],data:['The problem','What I built','What it changed'],totem:['The original idea','My role','The result'],deployment:['The scale','The problem','What changed']},under:{playcore:['The engineering questions'],data:['The lesson'],totem:['What users taught us'],deployment:['What I did']},learned:{playcore:['Why it matters'],data:['The lesson'],totem:['What users taught us','The result'],deployment:['What changed']}};
+$$('[data-modal-view]').forEach(b=>b.onclick=()=>{currentModalView=b.dataset.modalView;$$('[data-modal-view]').forEach(x=>x.classList.toggle('active',x===b));const p=projects[currentProject],wanted=modalViews[currentModalView][currentProject],sections=p.sections.filter(x=>wanted.includes(x[0]));$('#modalStory').innerHTML=sections.map(x=>`<section><h3>${x[0]}</h3><p>${x[1]}</p></section>`).join('')});
+const oldClose=closeModal;closeModal=function(){oldClose();if(triggerCard&&triggerCard.focus)triggerCard.focus()};
 
-let selectedNode = null;
-const mapStatus = document.querySelector("#mapStatus");
-const bridgeCard = document.querySelector("#bridgeCard");
-const bridgeKicker = document.querySelector("#bridgeKicker");
-const bridgeTitle = document.querySelector("#bridgeTitle");
-const bridgeText = document.querySelector("#bridgeText");
-const bridgePath = document.querySelector("#bridgePath");
-const activeLine = document.querySelector("#activeLine");
-
-const nodePositions = {
-  customer:[260,26], business:[442,166], software:[416,416], hardware:[104,416], product:[78,166]
-};
-const center = [260,260];
-
-function setActiveNode(node) {
-  document.querySelectorAll(".map-node").forEach(n => n.classList.toggle("active", n.dataset.node === node));
+// Fluid, layered star field with slow home return and scroll parallax.
+const canvas=$('#starfield'),ctx=canvas.getContext('2d',{alpha:false});
+let W,H,DPR,stars=[],last=performance.now(),scrollTarget=window.scrollY,scrollCurrent=window.scrollY,starRunning=true;
+const pointer={x:0,y:0,lastX:0,lastY:0,vx:0,vy:0,active:false,lastMove:0};
+function starHue(){const q=Math.random();return q<.48?205:q<.61?215:q<.71?195:q<.79?165:q<.87?42:q<.94?25:355}
+function resizeStars(){
+  DPR=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;canvas.width=W*DPR;canvas.height=H*DPR;canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(DPR,0,0,DPR,0,0);
+  const count=Math.min(760,Math.max(240,Math.floor(W*H/2050)));
+  stars=Array.from({length:count},()=>{const x=Math.random()*W,y=Math.random()*H,depth=Math.random();return{x,y,homeX:x,homeY:y,vx:(Math.random()-.5)*.012,vy:(Math.random()-.5)*.012,depth,r:.24+Math.random()*1.22,a:.10+Math.random()*.58,h:starHue(),twinkle:Math.random()*Math.PI*2}});
 }
-
-function drawLine(from, to) {
-  const a = nodePositions[from] || center;
-  const b = nodePositions[to] || center;
-  activeLine.setAttribute("x1", a[0]); activeLine.setAttribute("y1", a[1]);
-  activeLine.setAttribute("x2", b[0]); activeLine.setAttribute("y2", b[1]);
-  activeLine.style.opacity = "1";
-}
-
-function renderSingle(node) {
-  const d = nodeData[node];
-  bridgeCard.classList.remove("ready");
-  bridgeKicker.textContent = d.kicker;
-  bridgeTitle.textContent = d.title;
-  bridgeText.textContent = d.text;
-  bridgePath.innerHTML = d.next.map(next => `<span class="path-chip">${d.label}</span><span class="path-arrow">→</span><span class="path-chip">${nodeData[next].label}</span>`).join("");
-  mapStatus.innerHTML = '<span class="status-dot"></span>Now pick where the conversation goes';
-  if (node === "product") {
-    activeLine.setAttribute("x1", center[0]); activeLine.setAttribute("y1", center[1]);
-    activeLine.setAttribute("x2", center[0]); activeLine.setAttribute("y2", center[1]);
-    activeLine.style.opacity = ".15";
-  } else {
-    drawLine("product", node);
-  }
-}
-
-function renderConnection(from, to) {
-  const key = `${from}-${to}`;
-  const info = connections[key] || [nodeData[from].label, nodeData[to].label, "The useful work happens in the interface between these two worlds."];
-  bridgeCard.classList.add("ready");
-  bridgeKicker.textContent = "BRIDGE";
-  bridgeTitle.textContent = info[2];
-  bridgeText.textContent = `From ${info[0].toLowerCase()} to ${info[1].toLowerCase()}, the goal is to keep the context intact instead of throwing the problem over the wall.`;
-  bridgePath.innerHTML = `<span class="path-chip">${info[0]}</span><span class="path-arrow">→</span><span class="path-chip">${info[1]}</span>`;
-  mapStatus.innerHTML = '<span class="status-dot"></span>Bridge selected — choose another node to trace again';
-  drawLine(from, to);
-}
-
-document.querySelectorAll(".map-node").forEach(node => {
-  node.addEventListener("click", () => {
-    const key = node.dataset.node;
-    if (selectedNode && selectedNode !== key) {
-      renderConnection(selectedNode, key);
-      selectedNode = key;
-      setActiveNode(key);
-      return;
+function pointerMove(e){pointer.lastX=pointer.x;pointer.lastY=pointer.y;pointer.x=e.clientX;pointer.y=e.clientY;pointer.vx=e.movementX??pointer.x-pointer.lastX;pointer.vy=e.movementY??pointer.y-pointer.lastY;pointer.active=true;pointer.lastMove=performance.now()}
+addEventListener('pointermove',pointerMove,{passive:true});addEventListener('pointerleave',()=>pointer.active=false);addEventListener('resize',resizeStars);addEventListener('scroll',()=>{scrollTarget=window.scrollY},{passive:true});document.addEventListener('visibilitychange',()=>starRunning=!document.hidden);resizeStars();
+function drawStars(now){
+  const dt=Math.min(2,(now-last)/16.67);last=now;scrollCurrent+=(scrollTarget-scrollCurrent)*.055;if(starRunning){ctx.fillStyle='#071019';ctx.fillRect(0,0,W,H);
+    const resting=now-pointer.lastMove>180;const gx=pointer.active?pointer.x:W*.67,gy=pointer.active?pointer.y:H*.22;const glow=ctx.createRadialGradient(gx,gy,0,gx,gy,Math.max(W,H)*.58);glow.addColorStop(0,'rgba(13,48,55,.30)');glow.addColorStop(.46,'rgba(8,27,40,.17)');glow.addColorStop(1,'rgba(7,16,25,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,W,H);
+    for(const s of stars){
+      if(pointer.active&&!resting){const dx=s.x-pointer.x,dy=s.y-pointer.y,d2=dx*dx+dy*dy,range=210;if(d2<range*range){const d=Math.sqrt(d2)||1,p=1-d/range,flow=.013+.021*s.depth;s.vx+=(dx/d)*.052*p+(-dy/d)*flow*p+pointer.vx*.0010*p*(.35+s.depth);s.vy+=(dy/d)*.052*p+(dx/d)*flow*p+pointer.vy*.0010*p*(.35+s.depth)}}
+      const spring=resting?.00042:.000075;s.vx+=(s.homeX-s.x)*spring*dt;s.vy+=(s.homeY-s.y)*spring*dt;s.vx*=resting?.985:.972;s.vy*=resting?.985:.972;s.x+=s.vx*dt;s.y+=s.vy*dt;
+      const parallax=(s.depth-.5)*.16;const px=s.x+scrollCurrent*parallax;const py=s.y-scrollCurrent*parallax*.32;const wrapX=((px%W)+W)%W,wrapY=((py%H)+H)%H;const flicker=.88+Math.sin(now*.0007+s.twinkle)*.12;const alpha=s.a*flicker*(.58+s.depth*.55);const radius=s.r*(.62+s.depth*.78);const speed=Math.hypot(s.vx,s.vy);
+      if(speed>.08){ctx.beginPath();ctx.strokeStyle=`hsla(${s.h},82%,78%,${Math.min(.55,alpha*.58)})`;ctx.lineWidth=Math.max(.35,radius*.38);ctx.moveTo(wrapX,wrapY);ctx.lineTo(wrapX-s.vx*3.2,wrapY-s.vy*3.2);ctx.stroke()}
+      ctx.beginPath();ctx.fillStyle=`hsla(${s.h},86%,82%,${Math.min(.9,alpha)})`;ctx.arc(wrapX,wrapY,radius,0,Math.PI*2);ctx.fill();
     }
-    selectedNode = key;
-    setActiveNode(key);
-    renderSingle(key);
-  });
-});
-
-document.querySelector("#mapReset").addEventListener("click", () => {
-  selectedNode = null;
-  document.querySelectorAll(".map-node").forEach(n => n.classList.remove("active"));
-  bridgeCard.classList.remove("ready");
-  bridgeKicker.textContent = "PRODUCT SYSTEM";
-  bridgeTitle.textContent = "The interesting part is in the handoffs.";
-  bridgeText.textContent = "Click any node to see what I care about there. Then click a second node to trace the connection between them.";
-  bridgePath.innerHTML = "";
-  mapStatus.innerHTML = '<span class="status-dot"></span>Pick a starting point';
-  activeLine.style.opacity = ".2";
-});
-
-const factsEl = document.querySelector("#fact");
-document.querySelector("#randomFact").addEventListener("click", () => {
-  const fact = facts[Math.floor(Math.random() * facts.length)];
-  factsEl.textContent = "✦ " + fact;
-});
-
-const thinkData = {
-  discovery:{number:"01",title:"Start with the problem, not the feature.",text:"I want to understand who is struggling, what they are actually trying to accomplish, and what evidence we have before jumping into a solution.",principle:"Question → context → evidence → opportunity"},
-  validate:{number:"02",title:"Make the riskiest assumption cheap to test.",text:"Prototype the part that could make the whole idea wrong. Put it in front of users early enough that changing direction is still inexpensive.",principle:"Risk → prototype → feedback → decision"},
-  build:{number:"03",title:"Get close enough to the implementation to know what matters.",text:"I don't need to write every line of code, but I want enough technical depth to understand constraints, tradeoffs, dependencies, and failure modes.",principle:"Intent → constraint → tradeoff → execution"},
-  learn:{number:"04",title:"Launch is a data point, not a graduation ceremony.",text:"A shipped product gives you better questions. Usage, support tickets, beta feedback, and weird edge cases all become inputs to the next iteration.",principle:"Ship → observe → learn → iterate"}
-};
-document.querySelectorAll(".think-tab").forEach(tab => {
-  tab.addEventListener("click", () => {
-    document.querySelectorAll(".think-tab").forEach(t => t.classList.remove("active"));
-    tab.classList.add("active");
-    const d = thinkData[tab.dataset.think];
-    document.querySelector("#thinkNumber").textContent=d.number;
-    document.querySelector("#thinkTitle").textContent=d.title;
-    document.querySelector("#thinkText").textContent=d.text;
-    document.querySelector("#thinkPrinciple").textContent=d.principle;
-  });
-});
-
-const projects = {
-  totem:{
-    eyebrow:"TOTEM / PRODUCT CASE STUDY",title:"Designing a product that had to disappear into the experience.",
-    sections:[
-      ["The challenge","Totem was built around helping people find friends in crowded environments without turning the experience into another phone screen."],
-      ["What changed","Real users wanted more information and flexibility than the original screen-free concept provided. That feedback pushed the product toward a small OLED path while preserving a future route to a larger display."],
-      ["The engineering reality","Range, firmware behavior, connectivity constraints, battery life, app behavior, compliance, and manufacturing all had to work together. The product couldn't be considered 'done' from only one layer."],
-      ["What I owned","Product direction, application engineering, beta feedback loops, feature definition, roadmap tradeoffs, firmware coordination, supplier communication, and customer-driven iteration."]
-    ]
-  },
-  cloud:{
-    eyebrow:"ENTERPRISE / PRODUCT LESSON",title:"Good technology doesn't rescue a poorly framed problem.",
-    sections:[
-      ["The lesson","Enterprise cloud and data-center work taught me to challenge assumptions early, especially when a solution starts to look like a preselected technology rather than a response to a validated need."],
-      ["How I work now","Start with the use case, identify stakeholders, make assumptions visible, and use pilots or smaller experiments before committing a large organization to a big program."]
-    ]
-  },
-  deployment:{
-    eyebrow:"K–12 / SCALE",title:"At scale, the boring details become the product.",
-    sections:[
-      ["The scale","I worked on device programs involving more than 300,000 devices across 150+ schools."],
-      ["The lesson","Rollout plans, logistics, support, communication, inventory, configuration, and recovery processes are not administrative side quests. They determine whether a technically good product succeeds in the field."]
-    ]
-  }
-};
-
-const modal=document.querySelector("#modal"),modalTitle=document.querySelector("#modalTitle"),modalEyebrow=document.querySelector("#modalEyebrow"),modalBody=document.querySelector("#modalBody");
-function openProject(key){const p=projects[key];modalEyebrow.textContent=p.eyebrow;modalTitle.textContent=p.title;modalBody.innerHTML=p.sections.map(([h,t])=>`<div class="modal-section"><h3>${h}</h3><p>${t}</p></div>`).join("");modal.classList.add("open");modal.setAttribute("aria-hidden","false");document.body.style.overflow="hidden"}
-function closeProject(){modal.classList.remove("open");modal.setAttribute("aria-hidden","true");document.body.style.overflow=""}
-document.querySelectorAll(".project-open").forEach(b=>b.addEventListener("click",()=>openProject(b.dataset.project)));
-document.querySelector("#modalClose").addEventListener("click",closeProject);
-modal.addEventListener("click",e=>{if(e.target===modal)closeProject()});
-document.addEventListener("keydown",e=>{if(e.key==="Escape")closeProject()});
-
-document.querySelector("#themeToggle").addEventListener("click",()=>document.body.classList.toggle("high-contrast"));
-const glow=document.querySelector(".cursor-glow");
-window.addEventListener("pointermove",e=>{glow.style.left=`${e.clientX}px`;glow.style.top=`${e.clientY}px`});
-document.querySelectorAll(".magnetic").forEach(el=>{
-  el.addEventListener("pointermove",e=>{const r=el.getBoundingClientRect(),x=e.clientX-r.left-r.width/2,y=e.clientY-r.top-r.height/2;el.style.transform=`translate(${x*.08}px,${y*.08}px)`});
-  el.addEventListener("pointerleave",()=>el.style.transform="");
-});
-const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible")}),{threshold:.12});
-document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));
-window.addEventListener("scroll",()=>{const max=document.documentElement.scrollHeight-window.innerHeight;document.querySelector(".scroll-progress").style.width=`${max>0?(window.scrollY/max)*100:0}%`});
-document.querySelector("#year").textContent=new Date().getFullYear();
+    pointer.vx*=.78;pointer.vy*=.78;
+  }requestAnimationFrame(drawStars)
+}requestAnimationFrame(drawStars);
